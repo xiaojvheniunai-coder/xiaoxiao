@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>巴柔武器库 · BJJ Arsenal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥋</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#d4a853;--gold-dim:rgba(212,168,83,0.12);--gold-bright:#f0e6d3;
+  --bg1:#0a0a0f;--bg2:#111827;--bg3:#0f172a;
+  --card:rgba(255,255,255,0.025);--card-border:#1e293b;
+  --text:#e2e8f0;--text-dim:#94a3b8;--text-muted:#64748b;--text-dark:#475569;
+  --red:#ef4444;--blue:#3b82f6;--green:#22c55e;--purple:#a855f7;--orange:#f97316;--cyan:#06b6d4;
+  --font:'Noto Sans SC','PingFang SC','Hiragino Sans GB',-apple-system,sans-serif;
+}
+body{font-family:var(--font);background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 40%,var(--bg3) 100%);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+button{font-family:var(--font);cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{font-family:var(--font)}
+.container{max-width:640px;margin:0 auto;padding:20px 16px;min-height:100vh}
+.hide{display:none!important}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fade-up{animation:fadeUp .35s ease-out both}
+.fade-in{animation:fadeIn .25s ease-out both}
+
+/* Header */
+.header{text-align:center;margin-bottom:24px;padding-top:8px}
+.header .icon{font-size:44px;margin-bottom:4px}
+.header h1{font-size:26px;font-weight:900;background:linear-gradient(90deg,var(--gold-bright),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
+.header .sub{font-size:12px;color:var(--text-muted);margin-top:6px;letter-spacing:1px}
+
+/* Search */
+.search-bar{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--card-border);background:var(--card);color:var(--text);font-size:14px;outline:none;margin-bottom:14px}
+.search-bar::placeholder{color:var(--text-dark)}
+.search-bar:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,168,83,.1)}
+
+/* Tab bar */
+.tabs{display:flex;gap:0;margin-bottom:16px;background:rgba(255,255,255,.03);border-radius:12px;padding:3px}
+.tab-btn{flex:1;padding:9px 0;border-radius:10px;border:none;font-size:13px;font-weight:700;transition:all .2s;background:transparent;color:var(--text-dark)}
+.tab-btn.active{background:rgba(212,168,83,.12);color:var(--gold)}
+
+/* Filter pills */
+.filters{display:flex;gap:6px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:16px;border:1.5px solid var(--card-border);background:rgba(255,255,255,.02);color:var(--text-dark);font-size:12px;font-weight:600;transition:all .2s}
+.filter-btn.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+
+/* Cards */
+.pos-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--card-border);background:var(--card);text-align:left;color:var(--text);width:100%;transition:all .15s;margin-bottom:6px}
+.pos-card:active{transform:scale(.985);background:rgba(255,255,255,.04)}
+.pos-card .emoji{font-size:28px;flex-shrink:0;width:40px;text-align:center}
+.pos-card .info{flex:1;min-width:0}
+.pos-card .name{font-size:15px;font-weight:700}
+.pos-card .name-en{font-size:11px;color:var(--text-dark);margin-top:1px}
+.pos-card .meta{font-size:10px;color:var(--text-muted);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.pos-card .arrow{font-size:16px;color:#334155;flex-shrink:0}
+
+/* Tags */
+.tag{font-size:10px;padding:1px 8px;border-radius:8px;font-weight:600;display:inline-block;white-space:nowrap}
+
+/* Chain cards */
+.chain-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;text-align:left;color:var(--text);width:100%;transition:all .15s;margin-bottom:5px}
+.chain-card:active{transform:scale(.985)}
+.chain-card .chain-name{font-size:14px;font-weight:600}
+.chain-card .chain-meta{font-size:11px;color:var(--text-dark);margin-top:2px}
+
+/* Detail page */
+.back-btn{background:none;border:none;color:var(--gold);font-size:14px;padding:4px 0;margin-bottom:16px;font-weight:600}
+.detail-card{padding:20px;border-radius:16px;background:var(--card);border:1px solid var(--card-border);margin-bottom:18px}
+.section-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:14px;letter-spacing:1px}
+.key-point{display:flex;gap:10px;font-size:13px;line-height:1.8;margin-bottom:8px}
+.key-point .num{color:var(--gold);font-weight:700;flex-shrink:0;min-width:18px}
+.key-point .text{color:var(--text-dim)}
+
+/* Step timeline */
+.step{display:flex;gap:14px}
+.step-dot-col{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.step-line{width:2px;flex:1;min-height:14px}
+.step-text{padding:2px 0 16px;font-size:14px;line-height:1.75;color:#cbd5e1}
+.step-text .step-title{font-weight:700;margin-bottom:2px;color:var(--text)}
+.step-text .step-detail{font-size:13px;color:var(--text-dim);line-height:1.7}
+
+/* Tip box */
+.tip-box{padding:14px 16px;border-radius:12px;background:rgba(212,168,83,.05);border:1px solid rgba(212,168,83,.15)}
+.tip-box .tip-label{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.tip-box .tip-text{font-size:14px;line-height:1.9;color:var(--text-dim)}
+
+/* Counter box */
+.counter-box{padding:14px 16px;border-radius:12px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.12);margin-top:14px}
+.counter-title{font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px}
+
+/* Mistake box */
+.mistake-item{display:flex;gap:8px;font-size:12px;line-height:1.7;margin-bottom:6px}
+.mistake-x{color:var(--red);flex-shrink:0;font-weight:700}
+
+/* Nav chips for related techniques */
+.nav-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.nav-chip{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;transition:all .15s}
+.nav-chip:active{transform:scale(.95)}
+
+/* Stats bar */
+.stats{display:flex;justify-content:center;gap:16px;margin-bottom:16px;font-size:11px;color:var(--text-dark)}
+
+/* Footer */
+.footer{text-align:center;margin-top:32px;font-size:11px;color:#334155;line-height:1.8;padding-bottom:24px}
+
+/* Category group header */
+.cat-header{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;margin-bottom:8px;margin-top:14px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════
+const TYPE={
+  submission:{label:"降服",color:"#ef4444",icon:"💀"},
+  sweep:{label:"扫技",color:"#3b82f6",icon:"🔄"},
+  escape:{label:"逃脱",color:"#22c55e",icon:"🏃"},
+  transition:{label:"过渡",color:"#a855f7",icon:"➡️"},
+  control:{label:"控制",color:"#f97316",icon:"🔒"},
+  grip:{label:"抢把",color:"#06b6d4",icon:"🤝"},
+};
+const ROLE={
+  top:{label:"上位",color:"#f59e0b"},
+  bottom:{label:"下位",color:"#6b7280"},
+  guard:{label:"防守",color:"#3b82f6"},
+  system:{label:"体系",color:"#06b6d4"},
+};
+
+const DATA={
+// ──── GUARD ────
+closedGuard:{name:"封闭式防守",en:"Closed Guard",role:"guard",emoji:"🦵",
+desc:"双腿缠绕对手腰部，脚踝交叉锁紧。最基础也最安全的防守位置，进攻选项极其丰富。",
+pts:["Break posture是一切前提——双手拉对手头/衣领向下","髋部保持活跃，微微偏向进攻侧——不要平躺","双腿夹紧脚踝锁死，不给对手站起空间","Grip有目的：一手控袖口/手腕，一手控衣领/后颈","对手站起时立刻打开guard转open guard，不要硬挂被slam"],
+chains:[
+{type:"submission",name:"十字固 Armbar",steps:["Break posture控制对手手腕","同侧脚踩髋旋转身体至垂直","另一腿高挂过头卡住颈后","双腿夹紧，髋部上顶完成"],tip:"旋转角度要接近90度，腿必须越过头卡住",counter:{name:"Armbar逃脱",steps:["被锁手握拳/抓自己衣领抵抗","向被攻击手臂方向翻身堆叠","抽手+体重压住pass到侧控"]}},
+{type:"submission",name:"三角绞 Triangle",steps:["控制一侧手腕推向对侧","同侧腿高挂颈部","另一腿锁到膝窝形成三角","拉头+cut angle夹紧完成"],tip:"锁完先调角度（身体偏转30度）再夹紧",counter:{name:"三角绞逃脱",steps:["立刻坐直，被困手肘插入对手大腿","另一手压对手锁腿脚踝","站起抬起对手后向下摔抽手"]}},
+{type:"submission",name:"断头台 Guillotine",steps:["对手低头时前臂插入颈下","S-grip或palm-to-palm锁扣","闭合guard身体后仰","髋部上提弓背完成"],tip:"High elbow版本更强：肘部指向天花板",counter:{name:"断头台逃脱",steps:["下巴内收","被锁侧手绕过对手身体抱腰","头向被抱侧移动滑出","pass到side control"]}},
+{type:"submission",name:"木村锁 Kimura",steps:["对手手撑地时抓住手腕","坐起贴近对手","攻击手从对手臂外穿过握自己手腕","figure-4锁→身体旋转施压"],tip:"坐起来是关键步骤。Kimura grip也可以用作sweep控制",counter:{name:"Kimura逃脱",steps:["被控手臂立刻贴紧身体","抓自己裤腿/Gi锚定","向对手方向翻身减压"]}},
+{type:"sweep",name:"剪刀扫 Scissor Sweep",steps:["一手控袖口一手深抓衣领","打开guard，胫骨横置对手腹部","另一腿勾对手远侧膝后","衣领推+袖口拉+上下腿剪切翻转"],tip:"时机：对手posture被打破向前倾的瞬间",counter:{name:"剪刀扫防御",steps:["重心后移坐直","被抓袖侧肘夹紧","远腿后撤稳底盘"]}},
+{type:"sweep",name:"花扫 Flower Sweep",steps:["一手深控袖口钉住对手手臂","另一手深抓同侧裤腿","攻击侧脚踩地，摆锤腿大幅甩向天花板","摆锤动量+蹬地力+手配合翻转"],tip:"摆锤腿甩得越高力量越大。对大体型对手也有效",counter:{name:"花扫防御",steps:["被抓裤腿侧腿后撤","手post撑地维持平衡","重心降低"]}},
+]},
+
+openGuard:{name:"开放式防守总论",en:"Open Guard Overview",role:"guard",emoji:"🌊",
+desc:"双腿未锁闭的所有防守位置的统称。包含蝴蝶、DLR、蜘蛛、lasso、X-guard等子系统。现代竞技BJJ的核心战场。",
+pts:["脚必须始终接触对手身体——髋部、大腿、二头肌、膝内侧","至少保持一个grip（抓握），无grip=被pass","不要平躺，保持侧身或坐起","根据对手站/跪调整guard类型：站→DLR/蜘蛛/SLX；跪→蝴蝶/half","随时准备在各种open guard间切换——不要死守一种"],
+chains:[
+{type:"transition",name:"对手站立时的Guard选择",steps:["对手站起→双脚立刻接触其身体","判断：对手双脚平行→蜘蛛/DLR","对手一前一后→DLR勾前腿 或 SLX","远距离→spider grip管理距离","近距离→蝴蝶hook/collar-sleeve"],tip:"对手的站位决定你的guard选择——不是你决定",counter:null},
+{type:"transition",name:"对手跪地时的Guard选择",steps:["对手双膝跪地→蝴蝶guard（hooks进去）","对手单膝跪→half guard / 抢underhook","对手低位趴着pass→lasso / collar-sleeve","距离被拉开→seated guard → 准备stand up"],tip:"跪地的对手重心低稳，蝴蝶和half guard最合适",counter:null},
+{type:"escape",name:"Guard被Pass时的恢复",steps:["对手开始pass→不要等完全pass再反应","第一反应：frame（前臂顶住）+hip escape","恢复knee shield或half guard","如果已经被pass到侧控→执行侧控逃脱","关键：guard retention比guard recovery容易10倍"],tip:"最好的guard recovery是不让guard被pass",counter:null},
+{type:"grip",name:"Open Guard抢把原则",steps:["每个open guard至少需要2个控制点","Gi：袖口+衣领 / 袖口+裤腿 / 双袖口","No-Gi：wrist+collar tie / 2-on-1 / underhook","优先级：先建立主grip再补辅助grip","被断grip→立刻重建或切换guard类型"],tip:"Open guard = grip fighting。谁先建立有利grip谁掌握主动",counter:null},
+]},
+
+butterflyGuard:{name:"蝴蝶防守",en:"Butterfly Guard",role:"guard",emoji:"🦋",
+desc:"坐起状态，双脚勾在对手大腿内侧。Marcelo Garcia标志性位置，扫技和快速过渡著称。",
+pts:["必须坐直——一旦被推倒平躺就失效","上体紧贴对手胸口/肩膀——距离是蝴蝶防守的命","至少一侧有underhook","双脚hooks不要太深——脚跟勾在大腿内侧即可","头贴在underhook同侧对手肩膀上","随时准备切换——蝴蝶是动态位置"],
+chains:[
+{type:"sweep",name:"基础蝴蝶扫 Butterfly Sweep",steps:["Underhook手深穿腋下抓腰带/后背","另一手overhook或控肘部","上体完全贴紧对手","向非underhook侧倾倒","同时hook爆发上提","跟随到top位"],tip:"三个同时：身体倒+hook提+underhook拉。最常见错误是上体不够贴近",counter:{name:"蝴蝶扫防御",steps:["被underhook时同侧做whizzer","重心后坐不让对手贴近","被攻击侧腿后撤抽出hook"]}},
+{type:"sweep",name:"单蝶扫 One Hook Sweep",steps:["只用一侧hook","另一腿放对手腿外侧控制","拿underhook贴紧","hook侧倾倒+上提","外侧腿辅助控制防其base"],tip:"双hook进不去时的替代方案",counter:{name:"防御",steps:["被勾侧膝盖外张破坏hook角度","肘夹紧不给拉袖口","重心后调"]}},
+{type:"submission",name:"断头台 Guillotine",steps:["对手低头时前臂绕颈","High elbow锁扣","身体后倒hooks上提","Guard锁紧施压"],tip:"蝴蝶的坐起姿态特别适合接guillotine——距离近、头在面前",counter:{name:"逃脱",steps:["下巴内收+肩膀顶入胸口","被锁侧手绕过身体抱腰","横向移动头部滑出"]}},
+{type:"transition",name:"Arm Drag反背",steps:["一手抓手腕另一手抓三头肌","快速拽过身体中线","身体跟着移动绕到侧面/背后","建立seatbelt + hooks"],tip:"Arm drag要又快又猛——犹豫就失败",counter:{name:"防御",steps:["手臂被拉时另一手立刻抓回","身体旋转面向对手不露背"]}},
+{type:"transition",name:"转入单腿 Single Leg",steps:["利用underhook身体偏移","空手抓对手一条腿","从坐起站起来","完成single leg"],tip:"蝴蝶和摔跤衔接非常自然",counter:null},
+]},
+
+delaRiva:{name:"德拉希瓦防守",en:"De La Riva Guard",role:"guard",emoji:"🪝",
+desc:"一腿从外侧勾住对手前腿，另一脚踩髋部或大腿。现代竞技BJJ核心open guard之一。",
+pts:["DLR hook要深：脚从小腿外侧穿过，脚背勾住大腿内侧","必须抓对手同侧脚踝防止抽腿","另一手抓袖口/裤腿保持第二控制点","非DLR脚踩髋部/二头肌/或贴地准备berimbolo","髋部保持活跃不停调整角度","DLR hook被抽出→立刻转其他guard"],
+chains:[
+{type:"sweep",name:"经典DLR扫",steps:["DLR hook深勾，手控脚踝+远侧裤腿","非DLR脚踩对手另侧髋部","DLR向外推+踩髋脚向内推","手配合拉拽→对手侧摔","跟到top"],tip:"双腿推拉配合——DLR往外拧+踩髋脚辅助方向",counter:{name:"DLR扫防御",steps:["被勾腿弯曲后撤半步","手压对手勾腿脚踝/裤脚","另一手控踩髋腿","解除后快速pass"]}},
+{type:"transition",name:"Berimbolo反背",steps:["抓对手腰带/后裤腰","身体向后翻滚","DLR hook控制旋转到对手背后","建立seatbelt + hooks"],tip:"核心是用勾腿控制旋转——不是靠手拉",counter:{name:"Berimbolo防御",steps:["感觉翻转时压低重心","被勾腿用力踩地抵抗","控制对手髋部不让其转到身后"]}},
+{type:"transition",name:"DLR直接反背",steps:["对手重心前移时","手抓腰带，身体向DLR hook方向旋转","穿过腿下方绕到背后","建立hook+seatbelt"],tip:"比berimbolo更直接——时机是对手重心前倾的瞬间",counter:{name:"防御",steps:["保持重心后坐","不要前倾给对手机会"]}},
+{type:"sweep",name:"转X-Guard扫",steps:["非DLR脚插入对手两腿之间","两脚形成X","双手控脚踝","X腿上提+拉脚踝→举起扫倒"],tip:"DLR和X-Guard天然连接。对手重心前压时特别适合",counter:{name:"防御",steps:["对手插腿时迅速后撤","重心降低蹲稳","手下压控制不让形成X"]}},
+{type:"submission",name:"脚锁入口 Ankle Lock",steps:["放弃DLR hook控制对手脚踝","夹入腋下进入Ashi Garami","前臂骨卡住跟腱","身体后仰+髋部上挺"],tip:"DLR是进入leg lock系统的重要入口",counter:{name:"脚锁逃脱",steps:["被攻击脚向对手身体方向踢","脚趾外旋减轻压力","另一脚踩髋制造空间后抽脚"]}},
+]},
+
+spiderGuard:{name:"蜘蛛防守",en:"Spider Guard",role:"guard",emoji:"🕷️",
+desc:"双手抓袖口，双脚踩二头肌形成四点控制。Gi专用强力远距离guard。",
+pts:["双手必须紧抓袖口——松开=放弃整个位置","脚踩二头肌（不是肘部），腿伸直制造最大张力","一旦对手break一个grip立刻重建或转guard","蜘蛛防守很累手——grip维持不住时及时转guard"],
+chains:[
+{type:"sweep",name:"蜘蛛扫 Spider Sweep",steps:["双控袖口+双踩二头肌","一腿伸直推另一腿弯曲收回","收回腿快速伸直推向对手同侧","对角线力量推倒→跟到top"],tip:"对角线力量：推的方向和拉的方向形成斜线",counter:{name:"防御",steps:["被推侧肘内收","重心后坐","先断一侧grip再pass"]}},
+{type:"sweep",name:"Lasso扫",steps:["一脚从踩二头肌绕过手臂外侧缠绕上臂(lasso)","另一侧保持标准蜘蛛","lasso侧腿内拧限制手臂","双腿配合+手拉袖口翻向lasso侧"],tip:"Lasso缠绕要深——小腿完全绕过手臂",counter:{name:"防御",steps:["立刻用被lasso手肘向下抽出","重心后移不给对手拧力","另一手辅助剥离lasso"]}},
+{type:"submission",name:"蜘蛛三角绞",steps:["一腿从踩二头肌高挂到对手颈部","制造一手进一手出条件","另一腿锁定三角","拉头调角度完成"],tip:"蜘蛛到三角是高频combo——你已控制双臂很容易制造条件",counter:{name:"逃脱",steps:["立刻坐直","被困肘插入对手大腿","站起+摔"]}},
+{type:"submission",name:"Omoplata全臂锁",steps:["控制一侧袖口拉过中线","同侧腿穿过对手手臂上方","腿挂肩膀，身体旋转面朝地面","坐起前倾对肩关节施压"],tip:"旋转要快不给对手抽手机会",counter:{name:"逃脱",steps:["对手腿刚挂上时前滚翻化解","或向前走绕过头部","翻滚解除肩部锁定"]}},
+{type:"transition",name:"转DLR",steps:["对手试图跨过你一条腿pass时","被跨腿转为DLR hook","手从袖口转抓裤腿/脚踝","进入DLR继续进攻"],tip:"Spider和DLR天然互转——高水平选手自如切换",counter:null},
+]},
+
+halfGuard:{name:"半防守",en:"Half Guard",role:"guard",emoji:"½",
+desc:"双腿缠住对手一条腿。现代BJJ发展出knee shield、deep half、lockdown等丰富子系统。",
+pts:["绝不平躺——侧身面对对手是生存基础","争取underhook——整个进攻体系的基石","被crossface压住→先用knee shield制造空间","下方腿主动缠紧不是被动等pass","随时准备转deep half或恢复full guard"],
+chains:[
+{type:"sweep",name:"老忠实扫 Old Faithful",steps:["Underhook深穿到腋下抓腰带/后背","头顶对手胸口","后腿勾住对手被缠腿","前脚踩地辅助","整体翻转到top"],tip:"Underhook要深+头位置正确+用整体力量翻",counter:{name:"防御",steps:["Whizzer压住underhook","Crossface控制头","用自由腿踩地维持底盘"]}},
+{type:"transition",name:"Dog Fight→反背",steps:["拿到underhook后坐起进入dog fight","Underhook手爬到对手背后","身体下潜穿到对手侧面→背后","建立seatbelt+hooks"],tip:"Lucas Leite经典路线。不要在dog fight停留太久",counter:{name:"防御",steps:["Whizzer保持对手无法转身后","重心压低","对手开始绕后立刻坐下面向"]}},
+{type:"sweep",name:"电梯扫 Elevator Sweep",steps:["外侧腿变成蝴蝶hook","上体贴紧拿住underhook","向underhook方向倾倒","hook上提翻转"],tip:"本质是在half guard里做蝴蝶扫",counter:{name:"防御",steps:["感觉hook插入时抽腿后撤","膝盖外顶破坏hook","Whizzer压紧+体重前倾"]}},
+{type:"sweep",name:"Knee Shield进攻",steps:["建立knee shield抵住对手胸/肩","控制袖口+衣领","knee shield脚踩髋推开","可转arm drag→back take或butterfly hook→sweep"],tip:"Knee shield是half guard的安全模式——先稳定再决定路径",counter:null},
+{type:"transition",name:"Deep Half入口",steps:["对手压力太大拿不到underhook时","身体潜到对手被缠腿下方","肩膀扛住大腿双手抱腿","进入deep half→多种扫技或back take"],tip:"Deep half是'被压了就往下钻'的策略",counter:null},
+{type:"escape",name:"回到Full Guard",steps:["Knee shield创造空间","Shrimp远离","另一腿穿过建立full guard","锁闭脚踝"],tip:"退回full guard重来也完全可以",counter:null},
+]},
+
+// ──── GRIP FIGHTING ────
+gripFighting:{name:"抢把体系",en:"Grip Fighting",role:"system",emoji:"🤝",
+desc:"抢把（Grip Fighting）是BJJ中被严重低估的技能。谁先建立有利grip谁掌握主动权。这是所有guard work和passing的基础。",
+pts:["先手优势：主动伸手抢把比被动防守更有效","断把（strip grip）优先级高于建立自己的grip","Gi抢把：袖口>衣领>裤腿>腰带（按优先级）","No-Gi抢把：collar tie > wrist > 2-on-1 > underhook","每次断把后立刻建立自己的grip——不要留空档","双手都被控制=极度危险——必须立刻断至少一个"],
+chains:[
+{type:"grip",name:"Gi袖口控制",steps:["四指在外拇指在内抓袖口","抓靠近手腕位置最有效","拉袖口向下→破坏对手姿势","拉袖口向侧→限制对手一侧手臂活动","配合脚踩二头肌→进入spider guard"],tip:"袖口是Gi柔术最重要的grip——控制袖口=控制对手手臂",counter:{name:"断袖口方法",steps:["用另一手握住自己被控手腕","向对手拇指方向猛拉抽出","或用脚踩对手抓握的手指方向剥离"]}},
+{type:"grip",name:"衣领控制 Collar Grip",steps:["深抓对手后衣领（四指在内越深越好）","交叉抓领（cross collar）→绞技入口","同侧抓领→控制姿势+设置sweep","双手抓领→强力posture控制"],tip:"衣领越深威胁越大——深到手腕骨接触颈部就是绞技距离",counter:{name:"断衣领方法",steps:["双手抓住对手抓领的手腕向下拉脱","肘部内收缩小空间不让对手深入","另一手握住对手手腕朝其拇指方向剥离"]}},
+{type:"grip",name:"No-Gi: Collar Tie",steps:["一手抓对手后颈（collar tie）","拉其头部向下→破坏姿势","配合另一手控制手腕/肘部","可以设置snap down/arm drag/前滚翻入guard"],tip:"No-Gi中collar tie相当于Gi的衣领控制",counter:{name:"Collar Tie防御",steps:["被抓后颈时立刻同侧手做frame推对手肘部","头部上抬抵抗下拉力","反手也抓对手后颈形成对称控制→谁先打破平衡谁赢"]}},
+{type:"grip",name:"2-on-1 / Russian Tie",steps:["双手控制对手一只手臂","一手抓手腕一手抓肘/三头肌","将对手手臂拉过你身体","可以直接→arm drag→back take","或→duck under→back take"],tip:"2-on-1是No-Gi最强力的控制——对手一只手完全被废掉",counter:{name:"2-on-1防御",steps:["被控手臂立刻向身体收回","另一手抓住对手控制手的手腕","旋转身体面对对手","夺回手臂控制"]}},
+{type:"grip",name:"Underhook/Whizzer战争",steps:["Underhook：手穿对手腋下抱背→进攻位","Whizzer：对手拿到underhook后的反控→手臂从外侧压住","Underhook>Whizzer是一般规律","但高水平whizzer可以反转局面→whizzer+hip switch→back take"],tip:"Underhook vs Whizzer是半防守和站立中最重要的对抗",counter:null},
+{type:"grip",name:"Pant Grip裤腿控制",steps:["抓对手膝盖附近裤腿","限制对手腿部移动","配合另一手控制→多种sweep入口","DLR中抓脚踝是必要控制"],tip:"裤腿控制是扫技的隐藏钥匙——很多sweep靠裤腿grip完成",counter:{name:"断裤腿方法",steps:["被抓裤腿侧腿猛力后撤","手向下掰对手手指方向剥离","后撤同时前进施压pass"]}},
+]},
+
+// ──── PIN / CONTROL ────
+sideControl:{name:"侧面控制",en:"Side Control",role:"top",emoji:"⬛",
+desc:"身体垂直压在对手胸部上方。最常见的控制位，向多方向transition和submission选项丰富。",
+pts:["体重沉在对手胸口——胸对胸压力","Crossface控制对手头朝向","膝盖顶住近侧髋部阻止转身","先稳定再进攻","用小幅度调整维持压力"],
+chains:[
+{type:"submission",name:"美国锁 Americana",steps:["对手远侧手臂放地面时","按住手腕压地形成L形","另一手穿过手臂下方","Figure-4锁→肘为支点弧线提腕"],tip:"肘部必须固定在地面。发力方向是弧线不是直线提",counter:{name:"逃脱",steps:["被攻击手抓自己腰带锚定","另一手推对手肘解除figure-4","Bridge+抽手→frame防御"]}},
+{type:"submission",name:"木村锁 Kimura",steps:["控制近侧手腕","从上臂外侧穿过figure-4","可能需step over头部增控","身体旋转力量完成"],tip:"力量来自身体转动。Finish不了→Kimura grip本身也是好控制",counter:{name:"逃脱",steps:["手臂贴紧身体不给角度","抓自己Gi锚定","翻身减压+shrimp"]}},
+{type:"submission",name:"棒球棒绞 Baseball Bat",steps:["一手深抓远侧衣领（四指朝内）","另一手抓近侧衣领（四指朝外）","双手如握棒球棒","滑到N/S方向→胸口压低收手完成"],tip:"很多人在pass过程中就埋好grip到位直接finish",counter:{name:"逃脱",steps:["感觉抓领时立刻掰开grip","下巴内收","向对手移动方向转身减压"]}},
+{type:"transition",name:"过渡Mount",steps:["体重移到上体","远侧膝盖沿地面滑过","越过腹部到另一侧","坐稳mount"],tip:"过渡时胸口压力不中断——抬身对手就插膝盖",counter:{name:"防御",steps:["膝盖滑过时肘膝连接","膝盖顶住来的腿","Shrimp制造空间→half guard"]}},
+{type:"transition",name:"KOB膝盖压腹",steps:["侧控提起上体","近侧膝盖放对手腹部","另一脚外撑","一手控领一手抓裤"],tip:"KOB是逼迫反应的位置——每种反应都有对应进攻",counter:{name:"KOB逃脱",steps:["双手推膝盖向远侧","同时髋部转向对手","推过身体恢复guard"]}},
+{type:"transition",name:"N/S南北位",steps:["向对手头部旋转180度","胸口压住脸部","双手控手臂","可上N/S choke"],tip:"旋转时贴着身体。N/S压力非常窒息",counter:null},
+]},
+
+sideControlBottom:{name:"侧控逃脱",en:"Side Control Bottom",role:"bottom",emoji:"😰",
+desc:"被侧面控制很不利。Frame住→制造空间→恢复guard。",
+pts:["不要平躺——侧身面向对手","Frame：近侧前臂顶颈，远侧手推髋——用骨骼支撑","下巴内收保护颈","对手越急着attack越容易出空间"],
+chains:[
+{type:"escape",name:"虾行逃脱 Shrimp",steps:["Frame住颈+推髋","Bridge顶起对手","趁空间shrimp远离","膝盖插入→half guard或full guard"],tip:"Bridge+Shrimp组合动作。一次不够连续多次",counter:null},
+{type:"escape",name:"翻桥逃脱 Bridge & Roll",steps:["控制对手远侧手臂拉到身边","同侧脚勾对手同侧腿","爆发bridge向被控侧","翻到top"],tip:"时机：对手专注attack时重心前移",counter:null},
+{type:"escape",name:"Ghost Escape幽灵逃脱",steps:["对手从侧控转向N/S时","利用旋转瞬间空间","身体向同方向滑出","从对手身下穿出→恢复guard或背后"],tip:"顺着对手的旋转走——像'顺水游'",counter:null},
+{type:"escape",name:"Underhook逃脱",steps:["近侧手穿到对手腋下拿underhook","身体侧身","Underhook力量从下方穿出","到dog fight/half guard/single leg"],tip:"拿到underhook=拿到生命线",counter:null},
+]},
+
+kesaGatame:{name:"浮固 袈裟固",en:"Kesa Gatame",role:"top",emoji:"🔐",
+desc:"柔道传统压制技。坐在对手身侧搂头+控臂+髋部紧贴。在MMA和自卫中非常有效。",
+pts:["髋部紧贴对手身侧不留空间","搂头手要深——前臂穿过后颈","控制近侧手臂：夹腋或控手腕","双腿展开三角支撑","体重通过侧肋/髋施加在胸口"],
+chains:[
+{type:"submission",name:"Head & Arm Choke",steps:["搂头手臂深穿颈部","对手手臂被夹在搂头手和身体之间","收紧搂头+头下压","对手自己的肩膀帮助施压"],tip:"靠位置和压力的绞杀不需太多肌肉",counter:{name:"逃脱",steps:["下巴内收","双手掰开锁","向后bridge制造空间","头滑出后shrimp"]}},
+{type:"submission",name:"Americana from Kesa",steps:["近侧手臂被夹腋下","腾出手按手腕向地面","Figure-4锁","利用体重提腕"],tip:"Kesa控制力极强对手很难防守americana",counter:{name:"逃脱",steps:["手抓自己腰带锚定","另一手推解figure-4"]}},
+{type:"transition",name:"过渡标准侧控",steps:["松开搂头→移到crossface","夹臂改为控远侧","旋转为垂直侧控","膝盖顶髋"],tip:"Kesa submission打不出→转标准侧控重新布局",counter:null},
+{type:"transition",name:"过渡Mount",steps:["搂头改为crossface","后腿越过对手身体","利用髋部接触滑动","建立mount"],tip:"从Kesa到mount比标准侧控更近",counter:null},
+]},
+
+kesaBottom:{name:"被浮固逃脱",en:"Kesa Bottom",role:"bottom",emoji:"😤",
+desc:"被浮固压住非常难受。但弱点明确：对手背后毫无防守。",
+pts:["保持冷静控制呼吸","弱点在对手背后","被困手臂争取抽出","不要正面bridge——kesa正面base很稳"],
+chains:[
+{type:"escape",name:"背后翻转",steps:["被困手臂尽量向对手后方移动","另一手推对手后腰","Bridge向对手背部方向","利用后方无base弱点翻倒","到top"],tip:"方向是关键——向对手后脑方向翻",counter:null},
+{type:"escape",name:"抽手→反背",steps:["被困手臂向下（朝自己髋部）抽","配合bridge制造空间","手自由后立刻建立frame","shrimp→恢复guard 或 绕到对手背后"],tip:"手臂自由后不要停——立刻进入下一步",counter:null},
+{type:"escape",name:"坐起反控",steps:["自由手绕到对手后方抓腰带","用grip辅助坐起来","身体向对手背后移动","打破kesa控制"],tip:"需要core力量和时机——对手放松压力瞬间坐起",counter:null},
+]},
+
+// ──── MOUNT ────
+mount:{name:"骑乘",en:"Mount",role:"top",emoji:"👑",
+desc:"坐在对手腰腹上方。仅次于背控的最强位置，重力完全站在你这边。",
+pts:["髋部下沉膝盖夹紧","低位mount先稳定→逐渐向高位mount移动","不要双手撑地","对手手放哪你就攻击哪"],
+chains:[
+{type:"submission",name:"Armbar from Mount",steps:["向高位mount移动","控制目标手腕","攻击侧脚踩头旁","另一腿过脸","后倒夹紧髋上顶"],tip:"Mount armbar最关键是不要丢位置——腿夹紧",counter:{name:"逃脱",steps:["被控手弯曲抓自己另一手","向被攻击侧翻身","手臂沿腿滑出"]}},
+{type:"submission",name:"Cross Choke十字绞",steps:["一手深插远侧衣领","另一手也抓衣领","X形交叉","肘内收前臂骨顶颈两侧"],tip:"Roger Gracie凭这一招横扫——因为第一手永远够深",counter:{name:"防御",steps:["双手拉对手深入的手腕","不让第二手也进衣领","Bridge把手掰出"]}},
+{type:"submission",name:"Ezekiel绞",steps:["一手从头下穿到另侧","穿过的手抓自己袖口内侧","被抓袖口手刀横切喉咙","穿过手上提+切的手下压"],tip:"Mount隐藏杀招——对手全力防cross choke时不预料",counter:{name:"逃脱",steps:["双手推前臂远离颈","下巴内收","Trap & Roll逃脱mount"]}},
+{type:"transition",name:"Back Take",steps:["对手翻身趴下试图逃脱时","顺势滑到背后","建立seatbelt+hooks"],tip:"对手翻身=送背。故意施压让对手想翻身然后顺势拿",counter:null},
+]},
+
+mountBottom:{name:"被骑乘逃脱",en:"Mount Bottom",role:"bottom",emoji:"😫",
+desc:"被骑乘是最危险位置之一。保护手臂颈部、系统逃脱。",
+pts:["T-Rex手臂：肘贴身。绝不伸直推","逃脱优先：肘膝逃脱(高%)>trap&roll(爆发)","保持呼吸不恐慌"],
+chains:[
+{type:"escape",name:"肘膝逃脱 Elbow-Knee",steps:["肘部护身两侧","一侧肘向下和膝盖连接","Small bridge制造空间","Shrimp膝盖插入→half guard","连续3-4次即可逃出"],tip:"最高百分比——即使对方比你大很多也能用",counter:null},
+{type:"escape",name:"陷阱翻桥 Trap & Roll",steps:["同侧手抓对手手腕","同侧脚勾对手脚","两个控制点到位后","爆发bridge向被困侧翻转"],tip:"手脚必须同时trap。最佳时机是对手伸手attack时",counter:null},
+{type:"escape",name:"高位Mount降级",steps:["对手到高位mount（坐胸口）","不要急着逃——先推回低位","双手推膝盖/髋+shrimp","回到低位后执行标准逃脱"],tip:"高位→低位→逃脱是正确策略",counter:null},
+]},
+
+// ──── BACK ────
+backControl:{name:"背部控制",en:"Back Control",role:"top",emoji:"🏆",
+desc:"BJJ王者位置。对手看不到你、无法有效防守。",
+pts:["Seatbelt：choking hand过肩绕颈+另一手穿腋下","双hooks脚跟勾大腿内侧","身体偏向choking hand侧","Body triangle是hooks的高阶替代"],
+chains:[
+{type:"submission",name:"裸绞 RNC",steps:["Choking hand需绕过颈部——最难一步","方法：拨手/强行插/切换角度创造空间","前臂贴紧颈动脉","Choking手放另一手二头肌","另一手放后脑","夹肘+胸口前挺完成"],tip:"力量来自胸口膨胀+肘内收不是手臂挤",counter:{name:"RNC逃脱",steps:["双手抓choking hand手腕下拉","下巴内收到锁骨","向choking hand方向转","拉到下巴以下后转身面对"]}},
+{type:"submission",name:"弓箭绞 Bow & Arrow",steps:["Choking hand深抓远侧衣领","另一手抓同侧裤腿膝弯处","取出一侧hook踩髋","身体向后伸展——拉领+拉腿如拉弓","颈部被衣领绞紧"],tip:"Finish率最高的绞杀之一。衣领grip至少过对手中线",counter:{name:"弓箭绞逃脱",steps:["第一时间双手抓衣领hand手腕下拉","身体向对手方向旋转减轻拉力","背部平贴地面消除弓的张力","趁角度失效转身面对"]}},
+{type:"submission",name:"Collar Choke",steps:["RNC绕不过时直接抓衣领","前臂骨顶颈一侧","另一手辅助拉领或抱头","身体偏移施压"],tip:"不一定非要RNC——collar choke从背后也非常有效",counter:null},
+{type:"transition",name:"丢背控→Mount",steps:["对手摘hooks开始转身时","顺势让对手翻到面朝上","直接到mount"],tip:"丢背控≠失败——过渡mount仍在上位",counter:null},
+]},
+
+backBottom:{name:"被背控逃脱",en:"Back Bottom",role:"bottom",emoji:"🆘",
+desc:"最危险下位。保护颈部>清除hooks>滑脱。",
+pts:["双手保护颈部——至少一手在下巴和choking hand之间","向choking hand侧滑落——反直觉但正确","背靠地面相对安全","不要趴下——更容易被绞"],
+chains:[
+{type:"escape",name:"经典滑落",steps:["双手紧贴下巴保护颈","向choking hand方向移动","肩膀落向地面","滑到对手身侧","继续转身面对→guard"],tip:"用肩膀压住choking手臂。本能往另一侧逃反而把脖子送过去",counter:null},
+{type:"escape",name:"清除Hooks",steps:["保护颈部","脚依次剥离hooks","踩住一脚固定","向被踩方向旋转","另一hook脱落→转身面对"],tip:"一次清一个hook",counter:null},
+{type:"escape",name:"防弓箭绞",steps:["感觉对手抓衣领时","同侧手立刻抓自己衣领不给空间","另一手控制对手正在抓领的手","转身面对→guard"],tip:"核心是不让第一手深入衣领",counter:null},
+]},
+
+turtle:{name:"龟缩",en:"Turtle",role:"bottom",emoji:"🐢",
+desc:"四肢着地蜷缩。过渡位置，不要停留。",
+pts:["肘夹紧膝盖","下巴内收","不要停留超过3秒"],
+chains:[
+{type:"escape",name:"Sit-out",steps:["一手撑地","同侧腿外踢","身体旋转面向对手"],tip:"力量来自爆发性和意外性",counter:null},
+{type:"escape",name:"Granby Roll",steps:["肩膀着地前滚翻","穿过控制→面对对手","恢复guard"],tip:"用肩膀和上背滚动。Eduardo Telles标志性技术",counter:null},
+{type:"transition",name:"技术站立",steps:["一手撑地","同侧脚前踏","站起面对对手"],tip:"起身时不要背对对手",counter:null},
+{type:"transition",name:"Peterson Roll",steps:["对手从侧面控制turtle时","手从对手腿下穿过抓大腿","肩膀着地滚动","翻到top"],tip:"Wrestling经典技术",counter:null},
+]},
+
+northSouth:{name:"南北位",en:"North-South",role:"top",emoji:"⬆️",
+desc:"头对头压制。侧控常见延伸，压力极大。",
+pts:["胸对胸压住——体重全施加在对手胸口和脸","双手控手臂防frame","髋部低沉"],
+chains:[
+{type:"submission",name:"N/S Choke",steps:["手从颈侧绕过前臂贴紧","身体偏移choking hand方向","全身下沉","用体重+手臂完成blood choke"],tip:"Marcelo Garcia标志性submission",counter:{name:"逃脱",steps:["转头面向另侧","双手frame推肩","Shrimp向一侧逃出→guard"]}},
+{type:"submission",name:"Kimura from N/S",steps:["控制一侧手臂figure-4","身体旋转回侧控方向","施加扭转力"],tip:"对手手臂已在控制范围很难收回",counter:null},
+{type:"transition",name:"回到侧控/转另一侧",steps:["向一侧旋转→回该侧标准侧控","或旋转180度到另一侧"],tip:"N/S↔侧控自由切换消耗体力打乱防御节奏",counter:null},
+]},
+
+// ──── LEG LOCK SYSTEM ────
+legLocks:{name:"腿锁体系",en:"Leg Lock System",role:"system",emoji:"🦿",
+desc:"现代BJJ最革命性的技术发展。从Ashi Garami（腿纠缠位）出发，攻击对手膝盖、脚踝、脚跟的完整体系。Danaher Death Squad将其系统化。",
+pts:["核心概念：先建立位置（Ashi Garami）再攻击","Standard Ashi：内侧腿控制对手髋，外侧腿勾对手大腿","Outside Ashi (Saddle/411)：你的腿从外侧纠缠→更强控制","50/50：双方互相纠缠→对称位置","IBJJF规则：白蓝带只允许straight ankle lock；棕黑带才允许heel hook","Inside heel hook比outside更危险——训练时务必注意安全"],
+chains:[
+{type:"submission",name:"直脚锁 Straight Ankle Lock",steps:["进入Standard Ashi Garami","将对手脚踝夹在腋下","前臂骨（桡骨）卡住跟腱上方","身体后仰+髋部上挺","保持对手脚趾朝外旋转增加效果"],tip:"IBJJF所有带级别都允许。关键是腋下要夹紧+前臂位置正确",counter:{name:"直脚锁逃脱",steps:["被攻击脚向对手身体方向踢/推","脚趾外旋减轻跟腱压力","另一脚踩对手髋部制造空间","将脚从腋下抽出→立刻站起pass"]}},
+{type:"submission",name:"Inside Heel Hook",steps:["进入Outside Ashi / Saddle / 411","双腿形成三角锁控制对手膝盖","一手抓对手脚跟（heel）","另一手辅助控制脚掌","向身体内侧旋转脚跟→攻击膝韧带"],tip:"最危险的腿锁——对膝韧带伤害极大。训练时catch & release不要真锁",counter:{name:"Inside Heel Hook逃脱",steps:["第一时间：膝盖和脚趾朝同一方向（不给扭转角度）","尝试将被控制的腿直线抽出","另一脚踩对手髋部辅助脱离","boot方法：旋转脚踝将脚跟从对手握中抽出"]}},
+{type:"submission",name:"Outside Heel Hook",steps:["从Standard Ashi或50/50","控制对手脚跟","向身体外侧旋转→攻击膝外侧韧带","身体后仰增加力矩"],tip:"比inside稍温和但仍然非常危险",counter:{name:"Outside Heel Hook逃脱",steps:["同inside：膝和脚趾同向","直线抽腿","踩髋制造空间","boot脚跟脱出"]}},
+{type:"submission",name:"Kneebar膝十字",steps:["从Ashi或passing过程中控制对手一条腿","将对手膝盖夹在你的双腿/髋之间","前臂卡在对手小腿上方","身体后仰如做armbar但对象是腿","髋部上挺对膝关节施压"],tip:"Kneebar=腿的armbar。角度和控制是关键",counter:{name:"Kneebar逃脱",steps:["被攻击腿立刻弯曲不让对手伸展","膝盖方向转向对手减轻压力","另一脚蹬对手髋部制造空间","抽出腿后立刻站起"]}},
+{type:"submission",name:"Toe Hold扭趾锁",steps:["控制对手脚掌","一手抓脚趾方向形成figure-4","另一手从脚底穿过握住","如同kimura但对象是脚踝","向内旋转施压"],tip:"可以从很多位置切入——50/50、half guard top等",counter:{name:"Toe Hold逃脱",steps:["被控脚立刻伸直+脚趾外旋","减少对手可以施力的角度","另一脚辅助推开","抽出脚后建立距离"]}},
+{type:"transition",name:"进入Leg Lock的入口",steps:["从DLR→释放hook进入SLX/X-guard→Ashi","从half guard bottom→对手pass时缠腿→outside ashi","从top→对手做inverting逃脱时→抓腿进入ashi","从50/50→比赛中常见","Standing→imanari roll→直接进入ashi garami"],tip:"腿锁不是独立系统——要和整个BJJ game融合。最好的leg locker也有很强的passing和guard",counter:null},
+]},
+
+// ──── BERIMBOLO ────
+berimbolo:{name:"Berimbolo详解",en:"Berimbolo System",role:"system",emoji:"🌀",
+desc:"从DLR位发动的翻滚式Back Take。Miyao兄弟和Rafael Mendes的看家技术。现代lightweight竞技BJJ的核心武器。",
+pts:["本质：用DLR hook控制对手一条腿，通过倒翻滚到对手身后","不是靠力量——是靠角度、时机和髋部灵活性","Berimbolo=进入系统，不只是一个单独技术","从berimbolo位置可以→back take / leg drag / kiss of dragon / crab ride","对手常见防御是面向你+base好→需要连续攻击打破","需要大量drilling——不是看一次就能用的技术"],
+chains:[
+{type:"transition",name:"经典Berimbolo→Back Take",steps:["从DLR位置，DLR hook深勾","双手抓对手裤腿/腰带","向后翻滚（向DLR hook反方向倒）","DLR hook保持控制引导旋转","穿到对手身体下方→背后","建立seatbelt grip","插入hooks完成back control"],tip:"核心是髋部灵活性和hook的控制力。滚的时候不要松开hook",counter:{name:"Berimbolo防御",steps:["感觉对手开始翻转→立刻压低重心蹲稳","被勾腿用力踩地抵抗旋转","双手控制对手髋部","如果已半转过去→立刻面向对手+跪稳base"]}},
+{type:"transition",name:"Kiss of the Dragon",steps:["从DLR被对手pass时（反向berimbolo入口）","对手knee cut pass过程中","你的DLR hook保持","从对手腿下方倒穿到另一侧","出来时直接在对手背后","建立back control"],tip:"名字很酷的技术。本质是berimbolo的防御性变体——在被pass的过程中完成back take",counter:{name:"防御",steps:["Knee cut pass时注意对手DLR hook是否还在","如果还在→先清除hook再完成pass","完成pass后立刻建立crossface控制"]}},
+{type:"transition",name:"Crab Ride控制",steps:["Berimbolo翻滚到对手背后但","对手四肢着地不让你插hooks时","双脚勾住对手大腿外侧（crab hooks）","手控制对手腰/腰带","从crab ride→可以做back take / leg drag / truck"],tip:"Crab ride是berimbolo到back take之间的重要中转站",counter:{name:"Crab Ride逃脱",steps:["立刻坐下不给对手控制空间","肘夹紧膝盖","Granby roll或sit-out逃出"]}},
+{type:"sweep",name:"Berimbolo→Leg Drag",steps:["Berimbolo翻滚过程中","如果back take不成功","利用已有的位置和momentum","控制对手一条腿拖到身体另一侧（leg drag）","完成pass到side control"],tip:"Berimbolo不一定非要拿到back——leg drag也是优秀的结果",counter:{name:"Leg Drag防御",steps:["被拖腿立刻收回","髋部面向对手","建立knee shield或重建guard"]}},
+{type:"sweep",name:"Berimbolo扫技",steps:["翻滚过程中对手base很好拿不到背","利用翻滚momentum","将对手向一侧扫倒","跟到top position"],tip:"拿不到back也没关系——扫到top也是好结果",counter:null},
+]},
+
+// ──── GAME PLAN 比赛思维 ────
+gamePlan:{name:"🧠 比赛思维 Game Plan",en:"Game Plan & Decision Making",role:"system",emoji:"🧠",
+desc:"从'打到哪算哪'到'每一步都有目的'。Game Plan不是死记套路，而是在每个位置都有一个清晰的优先级列表：我在这里→我要去哪里→我用什么技术到达。",
+pts:["Game Plan = 位置目标 + 技术路径 + if/then决策","每个位置只需要2-3个你最熟练的技术选项就够了","不是记住100个技术——而是把5个技术练到本能反应","对练前给自己设一个当天课题：比如'今天只练从侧控过渡到mount'","高手的'规划感'其实是大量重复后形成的自动决策，不是临场计算"],
+chains:[
+{type:"control",name:"Gi上位Game Plan总路线",steps:["开局：站立→拉guard或takedown（你擅长上位，目标是到top）","到达top后第一目标：建立稳定的侧控（不要急着attack）","侧控稳定后→选择：①过渡Mount ②KOB逼反应 ③直接submission","到达Mount后→选择：①Cross choke ②Armbar ③如果对手翻身→拿背","背控→RNC或弓箭绞finish","全程思维：位置>submission。先到好位置，submission自然会来"],tip:"这就是你的'地图'——每次对练脑子里跑这条线",counter:null},
+{type:"control",name:"侧控决策树（你在侧控时）",steps:["第一优先：稳定位置——crossface+膝顶髋+体重下沉","观察对手反应→对手不动：尝试过渡mount","对手远侧手放地面→Americana机会","对手近侧手推你→Kimura机会","对手转身面向你→准备对手恢复half guard→重新pass","对手暴露颈部→棒球绞或N/S choke","记住：对手的每个防御动作都在给你一个进攻入口"],tip:"关键思维转变：不是'我要做什么'而是'对手给了我什么'",counter:null},
+{type:"control",name:"Mount决策树（你在骑乘时）",steps:["刚到mount→低位稳定5秒不要急","对手双手护颈(T-Rex)→向高位mount爬→Ezekiel绞或S-mount armbar","对手手推你胸口→抓住手腕→Americana","对手一只手放地面→控制该手腕→Armbar","对手试图bridge翻你→降低重心base住→等他累了再进攻","对手翻身趴下→顺势拿背→RNC","对手啥都不做→慢慢往高位爬→Cross choke"],tip:"Mount的哲学：你不需要急——重力和时间都站在你这边",counter:null},
+{type:"control",name:"被下位时的生存计划",steps:["被takedown/pass→不要恐慌→立刻frame","被侧控→第一反应：frame+shrimp→恢复half guard","被mount→T-Rex防守→elbow-knee逃脱→恢复half guard","被背控→保护颈部→向choking hand滑落","恢复到half guard后→争取underhook→回到你的Game Plan","核心原则：每次都回到half guard作为'安全屋'然后反攻"],tip:"逃脱不是目的——逃脱是为了回到你能进攻的位置",counter:null},
+{type:"transition",name:"对练前的3个问题",steps:["问自己：①今天练什么位置？（比如：侧控→mount过渡）","②我到了那个位置要尝试什么？（比如：cross choke+armbar二择）","③如果失败了我的B计划是什么？（比如：回到侧控重来）","每次对练只聚焦1-2个课题——不要贪多","结束后回顾：我做到了吗？哪里卡住了？"],tip:"刻意练习>无目的rolling。一个月聚焦一个课题，比每天打三个位置进步快10倍",counter:null},
+]},
+
+// ──── PASSING SYSTEM ────
+passingSystem:{name:"Pass Guard体系",en:"Guard Passing",role:"top",emoji:"🚪",
+desc:"从对手的guard到达侧控/mount的技术。作为上位选手，passing能力是你Game Plan的起点——pass不掉就没有后续。",
+pts:["Pass的两大流派：Pressure Pass（压力pass）和Speed Pass（速度pass）","Pressure：体重前压+慢慢磨过→适合大体型、Gi","Speed：快速绕过对手腿→适合灵活型、No-Gi","Gi上位推荐先练好Pressure Pass——更可靠更不依赖体能","Pass之前先要break对手的grip——不断grip就pass不了"],
+chains:[
+{type:"transition",name:"Knee Cut Pass膝切",steps:["一膝盖切入对手双腿之间","体重通过膝盖向下压","同时crossface控制对手头","膝盖切过对手大腿到达另一侧","建立侧控"],tip:"最基础最高效的pass——练好这一个就能应对80%的guard",counter:{name:"Knee Cut防御",steps:["被切膝盖侧立刻建立knee shield","手控制对手切入的膝盖","Shrimp制造空间恢复guard","或者DLR hook勾住前腿"]}},
+{type:"transition",name:"Over-Under Pass上下压",steps:["一手从对手一条腿上方穿过（over）","另一手从另一条腿下方穿过（under）","双手合握形成锁扣","肩膀压住对手腹部","慢慢向一侧滑动完成pass"],tip:"经典pressure pass——Bernardo Faria的标志性技术。对手越挣扎你越压得紧",counter:{name:"防御",steps:["双手立刻frame推对手肩膀","被under的腿尝试抽出","shrimp制造空间建立half guard"]}},
+{type:"transition",name:"Toreando Pass斗牛pass",steps:["双手抓住对手双腿裤脚/脚踝","将对手双腿推向一侧","身体快速绕到另一侧","建立侧控"],tip:"Speed pass的代表——需要速度和时机但不需要太多体力",counter:{name:"防御",steps:["双腿被推时髋部跟着转","膝盖保持面向对手","手抓住对手袖口重建grip"]}},
+{type:"transition",name:"Leg Drag腿拖",steps:["控制对手一条腿","将该腿拖到你身体另一侧","用髋部压住被拖的腿","从侧面建立控制→pass到侧控"],tip:"现代竞技BJJ最流行的pass方式之一。DLR和berimbolo的反制",counter:{name:"防御",steps:["被拖腿立刻收回","髋部面向对手","建立knee shield"]}},
+{type:"transition",name:"Stack Pass堆叠pass",steps:["抓住对手双腿向其头部方向推","将对手折叠起来（堆叠）","对手guard的所有张力被消除","从侧面绕过→建立侧控"],tip:"破解所有open guard的通用策略——对手被折叠后什么guard都没用",counter:{name:"防御",steps:["双手frame推对手肩膀不让其压过来","髋部向一侧转不让被完全堆叠","脚踩对手髋部制造距离"]}},
+]},
+
+// ──── DRILL LIBRARY ────
+drillLibrary:{name:"Drill训练清单",en:"Drill Library",role:"system",emoji:"🏋️",
+desc:"Drill是把技术变成本能反应的唯一方法。每次训练前花10-15分钟做drill，比多打一轮对练进步更快。",
+pts:["Solo drill（独自练习）：不需要搭档，热身时做","Partner drill（搭档练习）：双人配合，技术课后做","Positional sparring（位置对练）：从特定位置开始的限制性对练","每个drill重复至少20次才有效果——5次只是'见过'不是'会了'","Drill时速度慢→正确→逐渐加速→最终全速无意识完成"],
+chains:[
+{type:"control",name:"Solo Drill：虾行 Shrimp",steps:["躺在地面，双脚踩地","bridge髋部上提","髋部向一侧shrimp（像虾一样弹）","交替左右做到垫子另一头","回来时反向做"],tip:"BJJ最重要的solo drill——没有之一。每次热身做2-3趟",counter:null},
+{type:"control",name:"Solo Drill：技术站立",steps:["从坐姿开始","一手撑地，对侧脚前踏","站起同时保持防御姿态","蹲回去→换边重复"],tip:"自卫和比赛都用得到——从地面安全站起来",counter:null},
+{type:"control",name:"Solo Drill：Guard Retention髋部灵活",steps:["躺在地面，双脚朝上","想象对手从不同方向pass","髋部快速转向追踪'对手'","脚始终面向'对手'方向","左右交替做30秒"],tip:"Guard retention的基础——髋部追踪速度决定你能不能守住guard",counter:null},
+{type:"control",name:"Solo Drill：Granby Roll前滚翻",steps:["从龟缩位置开始","一侧肩膀着地","沿肩→上背→另一侧肩滚动","滚完面朝上→恢复guard姿态","换边重复"],tip:"龟缩逃脱和guard recovery的关键动作",counter:null},
+{type:"control",name:"Partner Drill：Pass→恢复循环",steps:["A从closed guard开始，B尝试pass","B pass成功→到侧控停2秒","A做侧控逃脱→恢复guard","B再次尝试pass→循环","做3分钟换人"],tip:"最有价值的partner drill——同时练passing和guard recovery",counter:null},
+{type:"control",name:"Partner Drill：侧控→Mount过渡",steps:["A在侧控top位","A尝试过渡到mount","B轻度抵抗（50%力度）","A成功到mount→停2秒→回到侧控重做","做3分钟换人"],tip:"专门针对你的Game Plan——侧控到mount是你的核心路线",counter:null},
+{type:"control",name:"Partner Drill：Mount Attack循环",steps:["A在mount位","B做各种防御（护颈/推/bridge）","A根据B的防御选择对应攻击","Cross choke→被防→转armbar→被防→转back take","做3分钟换人"],tip:"训练mount的if/then决策——对手的防御=你的进攻信号",counter:null},
+{type:"control",name:"Positional Sparring建议",steps:["周一：从侧控开始——A attack/transition，B escape","周二：从mount开始——A attack，B escape","周三：从closed guard开始——A sweep/submit，B pass","周四：从背控开始——A choke，B escape","每轮3分钟，成功后reset从头开始"],tip:"Positional sparring比自由对练学得快——因为你在特定位置的重复次数是自由对练的10倍",counter:null},
+]},
+
+// ──── SWEEP ENCYCLOPEDIA ────
+sweepEncyclopedia:{name:"扫技大全",en:"Sweep Encyclopedia",role:"guard",emoji:"🌪️",
+desc:"扫技（Sweep）是从下位翻转到上位的技术。作为上位选手，掌握扫技让你即使被放到下位也能迅速回到你的领地。",
+pts:["所有扫技的共同原理：破坏对手的base（支撑点）","对手的base来自：双手+双膝/双脚=四个支撑点","去掉一个支撑点→对手不稳→向缺少支撑的方向扫","扫完最重要的是跟进——扫倒不跟到top等于白扫","练扫技时重点练'失败后的恢复'——扫不成功至少不要被pass"],
+chains:[
+{type:"sweep",name:"Hip Bump Sweep坐起扫",steps:["从closed guard，一手撑到身后地面","爆发性坐起来，胸口撞向对手","另一手搂住对手同侧手臂/头","利用坐起的momentum将对手向后翻","跟到mount"],tip:"最被低估的白带扫技——简单粗暴有效。对手posture up时特别好用",counter:{name:"防御",steps:["被坐起时立刻手post撑地","重心后移不要被带动","另一手推对手肩膀"]}},
+{type:"sweep",name:"Balloon Sweep气球扫",steps:["从closed guard打开双腿","双脚踩对手髋部","双手抓对手袖口","身体后滚同时双脚上蹬","把对手像气球一样送到头顶后方","松手让对手翻过去→跟到top"],tip:"对手重心前倾时最有效——用对手自己的力量送他飞",counter:{name:"防御",steps:["感觉到脚踩髋时立刻重心后坐","手post撑地","不要前倾"]}},
+{type:"sweep",name:"Tripod Sweep三脚架扫",steps:["从open guard/DLR","一脚踩对手一侧髋部","另一脚勾住对手另一侧脚踝后方","手抓住对手同侧脚踝（被勾那只脚）","踩髋脚推+勾脚脚后拉=对手向后倒","立刻站起跟到top"],tip:"Open guard最基础的扫之一——两脚一推一勾像三脚架被踢倒",counter:{name:"防御",steps:["被勾脚立刻后撤","重心降低蹲稳","手拉开对手踩髋的脚"]}},
+{type:"sweep",name:"Sickle Sweep镰刀扫",steps:["从open guard","一脚踩对手一侧髋部","另一腿在对手膝盖后方像镰刀一样割","手拉对手同侧袖口向后","推+割+拉同时发力","对手膝盖被割失去支撑→倒地"],tip:"和Tripod sweep是一对组合——一个向后扫一个向侧扫",counter:{name:"防御",steps:["被割膝盖侧腿立刻抬起后撤","重心转移到另一腿","手断开对手grip"]}},
+{type:"sweep",name:"Waiter Sweep服务员扫",steps:["从half guard或被pass过程中","一手'端'住对手的一条腿（像端盘子）","身体钻到对手身下","用'端盘子'的手将对手腿抬高","另一手推对手髋部方向","对手被架起来→向一侧翻倒"],tip:"名字来自端盘子的动作——Jeff Glover标志性技术。Deep half guard常用",counter:{name:"防御",steps:["腿被端起时立刻抽回","重心降低压住对手","另一腿base住"]}},
+{type:"sweep",name:"Dummy Sweep假人扫",steps:["从half guard knee shield位置","一手推对手同侧肩膀","另一手抓对手远侧裤腿","knee shield脚伸直推对手向后","配合抓裤腿的手向远侧拉","对手被对角线力量推倒"],tip:"Knee shield的简单高效扫技——不需要underhook也能扫",counter:{name:"防御",steps:["被推时重心前压","手控制对手knee shield腿向下压","另一手post撑地"]}},
+]},
+};
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER ENGINE
+// ═══════════════════════════════════════════════════════════
+const $=id=>document.getElementById(id);
+const app=$('app');
+let state={view:'home',posKey:null,chainIdx:null,filter:'all',search:'',tab:'positions'};
+
+function tag(label,color){return `<span class="tag" style="background:${color}20;color:${color}">${label}</span>`}
+function roleTag(role){const r=ROLE[role];return tag(r.label,r.color)}
+function typeTag(type){const t=TYPE[type];return tag(t.label,t.color)}
+
+function stepTimeline(steps,color){
+  return steps.map((s,i)=>`
+    <div class="step">
+      <div class="step-dot-col">
+        <div class="step-dot" style="background:${color}20;border:2px solid ${color};color:${color}">${i+1}</div>
+        ${i<steps.length-1?`<div class="step-line" style="background:${color}22"></div>`:''}
+      </div>
+      <div class="step-text">${typeof s==='string'?s:`<div class="step-title">${s.step}</div><div class="step-detail">${s.detail}</div>`}</div>
+    </div>
+  `).join('');
+}
+
+function counterBox(counter){
+  if(!counter)return '';
+  return `
+    <div class="counter-box">
+      <div class="counter-title">🏃 逃脱/反制：${counter.name}</div>
+      ${stepTimeline(counter.steps,'#22c55e')}
+    </div>
+  `;
+}
+
+function renderHome(){
+  const positions=Object.entries(DATA);
+  const s=state.search.toLowerCase();
+  const filtered=positions.filter(([,v])=>{
+    const roleMatch=state.filter==='all'||v.role===state.filter;
+    if(!s)return roleMatch;
+    const nm=v.name.includes(s)||v.en.toLowerCase().includes(s);
+    const cm=v.chains.some(c=>c.name.toLowerCase().includes(s)||c.name.includes(s));
+    return roleMatch&&(nm||cm);
+  });
+  const totalChains=filtered.reduce((a,[,v])=>a+v.chains.length,0);
+
+  app.innerHTML=`
+    <div class="header fade-up">
+      <div class="icon">🥋</div>
+      <h1>巴柔武器库</h1>
+      <div class="sub">BJJ Arsenal · 训练前预习速查</div>
+    </div>
+    <input class="search-bar" id="searchInput" type="text" placeholder="搜索位置或技术… (armbar, 蝴蝶, DLR, kimura, 腿锁...)" value="${state.search}">
+    <div class="filters">
+      ${['all','guard','top','bottom','system'].map(k=>{
+        const labels={all:'全部',guard:'🛡 防守',top:'⬆ 上位',bottom:'⬇ 下位',system:'📐 体系/训练'};
+        return `<button class="filter-btn ${state.filter===k?'active':''}" data-filter="${k}">${labels[k]}</button>`;
+      }).join('')}
+    </div>
+    <div class="stats"><span>${filtered.length} 个位置/体系</span><span>·</span><span>${totalChains} 个技术</span></div>
+    <div>
+      ${filtered.map(([key,pos])=>{
+        const counts={};
+        pos.chains.forEach(c=>{counts[c.type]=(counts[c.type]||0)+1});
+        const meta=Object.entries(counts).map(([t,n])=>`<span style="color:${TYPE[t].color}">${TYPE[t].icon}${n}</span>`).join('');
+        return `
+          <button class="pos-card fade-up" data-pos="${key}" style="animation-delay:${filtered.indexOf(filtered.find(f=>f[0]===key))*0.03}s">
+            <div class="emoji">${pos.emoji}</div>
+            <div class="info">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span class="name">${pos.name}</span>
+                ${roleTag(pos.role)}
+              </div>
+              <div class="name-en">${pos.en}</div>
+              <div class="meta">${meta}</div>
+            </div>
+            <div class="arrow">›</div>
+          </button>
+        `;
+      }).join('')}
+      ${filtered.length===0?'<div style="text-align:center;padding:40px;color:#475569;font-size:14px">没有找到匹配的位置或技术</div>':''}
+    </div>
+    <div class="footer">${Object.keys(DATA).length} 个位置/体系 · 训练前5分钟速览<br>白带至蓝带核心技术 + Game Plan + Drill + 腿锁 & Berimbolo</div>
+  `;
+
+  $('searchInput').addEventListener('input',e=>{state.search=e.target.value;renderHome()});
+  document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.filter=b.dataset.filter;renderHome()}));
+  document.querySelectorAll('[data-pos]').forEach(b=>b.addEventListener('click',()=>{state.posKey=b.dataset.pos;state.chainIdx=null;renderPosition()}));
+}
+
+function renderPosition(){
+  const pos=DATA[state.posKey];
+  const typeOrder=['submission','sweep','escape','transition','control','grip'];
+
+  app.innerHTML=`
+    <button class="back-btn" id="backHome">← 全部位置</button>
+    <div class="detail-card fade-up">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span style="font-size:36px">${pos.emoji}</span>
+        <div style="flex:1">
+          <h2 style="font-size:22px;font-weight:800">${pos.name}</h2>
+          <div style="font-size:12px;color:var(--text-dark)">${pos.en}</div>
+        </div>
+        ${roleTag(pos.role)}
+      </div>
+      <p style="font-size:13px;line-height:1.9;color:var(--text-dim)">${pos.desc}</p>
+    </div>
+
+    <div class="detail-card fade-up" style="background:rgba(212,168,83,.04);border-color:rgba(212,168,83,.12);animation-delay:.05s">
+      <div class="section-title">📌 位置要点</div>
+      ${pos.pts.map((p,i)=>`<div class="key-point"><span class="num">${i+1}.</span><span class="text">${p}</span></div>`).join('')}
+    </div>
+
+    <div class="section-title" style="margin-top:20px">⛓️ 技术链 · 点击查看详细步骤</div>
+    ${typeOrder.map(type=>{
+      const chains=pos.chains.map((c,i)=>({...c,idx:i})).filter(c=>c.type===type);
+      if(!chains.length)return '';
+      const tc=TYPE[type];
+      return `
+        <div class="cat-header" style="color:${tc.color}">${tc.icon} ${tc.label} (${chains.length})</div>
+        ${chains.map(chain=>`
+          <button class="chain-card" data-chain="${chain.idx}" style="border:1px solid ${tc.color}18;background:${tc.color}06">
+            <div style="flex:1">
+              <div class="chain-name">${chain.name}</div>
+              <div class="chain-meta">${chain.steps.length} 步${chain.counter?' · 含逃脱':''}</div>
+            </div>
+            <span style="color:#334155;font-size:16px">›</span>
+          </button>
+        `).join('')}
+      `;
+    }).join('')}
+  `;
+
+  $('backHome').addEventListener('click',()=>{state.posKey=null;renderHome()});
+  document.querySelectorAll('[data-chain]').forEach(b=>b.addEventListener('click',()=>{state.chainIdx=parseInt(b.dataset.chain);renderChain()}));
+}
+
+function renderChain(){
+  const pos=DATA[state.posKey];
+  const chain=pos.chains[state.chainIdx];
+  const tc=TYPE[chain.type];
+
+  // Related chains
+  const related=pos.chains.map((c,i)=>({...c,idx:i})).filter(c=>c.idx!==state.chainIdx);
+
+  app.innerHTML=`
+    <button class="back-btn" id="backPos">← ${pos.name}</button>
+    <div class="detail-card fade-up">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:24px">${tc.icon}</span>
+        <div>
+          <div style="font-size:20px;font-weight:800">${chain.name}</div>
+          <div style="display:flex;gap:8px;margin-top:4px;align-items:center">
+            ${typeTag(chain.type)}
+            <span style="font-size:11px;color:var(--text-dark)">从 ${pos.name} 出发</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">动作步骤</div>
+    <div class="fade-up" style="margin-bottom:16px;animation-delay:.05s">
+      ${stepTimeline(chain.steps,tc.color)}
+    </div>
+
+    <div class="tip-box fade-up" style="animation-delay:.1s">
+      <div class="tip-label">💡 要点提示</div>
+      <div class="tip-text">${chain.tip}</div>
+    </div>
+
+    ${counterBox(chain.counter)}
+
+    <div style="margin-top:20px">
+      <div style="font-size:12px;color:var(--text-dark);margin-bottom:10px">同位置其他技术：</div>
+      <div class="nav-chips">
+        ${related.map(c=>`
+          <button class="nav-chip" data-chain="${c.idx}" style="border:1px solid ${TYPE[c.type].color}30;background:${TYPE[c.type].color}10;color:${TYPE[c.type].color}">
+            ${TYPE[c.type].icon} ${c.name.length>12?c.name.substring(0,12)+'…':c.name}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  $('backPos').addEventListener('click',()=>{state.chainIdx=null;renderPosition()});
+  document.querySelectorAll('[data-chain]').forEach(b=>b.addEventListener('click',()=>{state.chainIdx=parseInt(b.dataset.chain);renderChain();window.scrollTo(0,0)}));
+}
+
+// Init
+renderHome();
+</script>
+</body>
+</html>
